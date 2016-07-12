@@ -35,4 +35,5 @@ vignettes/*.pdf
 # don't include the data
 Daten/*
 Plots/*
+*.*log
 
