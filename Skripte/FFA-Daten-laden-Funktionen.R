@@ -71,7 +71,6 @@ FFA.get.data.frame.from.url = function(url,xpathheader,xpathcontent="/*",quiet=F
 FFA.correct.EINSAETZE.data.frame = function(x) {
 	DATA = as.data.frame(x) # The data frame
 	
-	
 	# ganzen Zeitstempel aus Datum und Alarmzeit zusammenbasteln
 	DATA$ZEIT <- as.POSIXct(paste(DATA$Datum,DATA$Alarmzeit),format="%n%d.%n%B%n%Y%n%H:%M%n")
 	
@@ -95,13 +94,15 @@ FFA.correct.EINSAETZE.data.frame = function(x) {
 	DATA$EINSATZDAUER.MINUTEN <- DAUER
 	
 	# Mannschaftsstärke berechnen
-	DATA$MANNSCHAFT.GESAMT <- sapply(strsplit(x=as.character(EINSAETZE$Mannschaftsstärke),split = "[^0-9]+"),function(x)sum(as.numeric(x)))
+	DATA$MANNSCHAFT.GESAMT <- sapply(strsplit(x=as.character(DATA$Mannschaftsstärke),split = "[^0-9]+"),function(x)sum(as.numeric(x)))
 	
 	# Unnötige Spalten entfernen
-	DATA = DATA[,-grep("(Bilder)|(Presse)|(Video)",colnames(DATA),ignore.case = T)]
+	# DATA = DATA[,-grep("(Bilder)|(Presse)|(Video)",colnames(DATA),ignore.case = T)]
 	
 	# Gallerie aus dem Einsatzbericht entfernen
-	DATA$Einsatzbericht <- gsub(x=DATA$Einsatzbericht,pattern = "#gallery.*?\\*/",replacement = "")
+	# einsatzbericht_ersetzt <- gsub(x=DATA$Einsatzbericht,pattern = "#gallery.*?\\*/",replacement = "")
+	# cat("Bericht ohne Galerie:",einsatzbericht_ersetzt,"\n")
+	# DATA$Einsatzbericht <- einsatzbericht_ersetzt
 	
 	# Leerzeilen mit nur NA entfernen
 	rows.with.only.na <- apply(DATA,1,function(x)all(is.na(x)))

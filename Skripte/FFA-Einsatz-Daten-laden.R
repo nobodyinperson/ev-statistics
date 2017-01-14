@@ -95,21 +95,23 @@ for(tabnr in seq_along(DATA$EinsaetzeTabellen)) {
 		
 		# Links liegen in "Einsatzmeldung"
 		for(url in table$Einsatzmeldung) { 
-			cat("\n")
-			cat("Url",match(url,table$Einsatzmeldung),"von",length(table$Einsatzmeldung),"\n")
-			
-			# aus dieser Detailseite einen Data frame erstellen
-			LOOP$ContentDataFrame <- FFA.get.data.frame.from.url(
-				url = url,
-				xpathheader = PARAM$DetailPageHeaderXPath,
-				xpathcontent = PARAM$DetailPageContentXPath)
-			
-			# Zusammenfügen
-			if(!exists("EINSAETZE"))
-				EINSAETZE = LOOP$ContentDataFrame
-			else
-				EINSAETZE = concatenate.data.frames(EINSAETZE,LOOP$ContentDataFrame)
-			
+			if(!is.na(url)) {
+				cat("\n")
+				cat("Url",match(url,table$Einsatzmeldung),"von",length(table$Einsatzmeldung),"\n")
+				
+				# aus dieser Detailseite einen Data frame erstellen
+				LOOP$ContentDataFrame <- FFA.get.data.frame.from.url(
+					url = url,
+					xpathheader = PARAM$DetailPageHeaderXPath,
+					xpathcontent = PARAM$DetailPageContentXPath)
+				
+				# Zusammenfügen
+				if(!exists("EINSAETZE"))
+					EINSAETZE = LOOP$ContentDataFrame
+				else
+					EINSAETZE = concatenate.data.frames(EINSAETZE,LOOP$ContentDataFrame)
+				
+			}
 		} 
 		
 		cat("\n")
@@ -139,7 +141,15 @@ cat("Informationen wurden aus allen Einsatz-Detailseiten extrahiert!\n")
 cat("\n")
 cat("Produziere eine gesamte Datei...\n")
 if(exists("EINSAETZE")) rm(EINSAETZE)
-for(file in Sys.glob(paste(SETTINGS$EXPORTFOLDER,"/","Einsaetze-[0-9][0-9][0-9][0-9].csv",sep=""))){cat(file,"\n");d<-read.csv2(file);if(!exists("EINSAETZE")){EINSAETZE<-d}else{EINSAETZE<-concatenate.data.frames(EINSAETZE,d)}}
+for(file in Sys.glob(paste(SETTINGS$EXPORTFOLDER,"/","Einsaetze-[0-9][0-9][0-9][0-9].csv",sep=""))){
+	cat(file,"\n");
+	d<-read.csv2(file);
+	if(!exists("EINSAETZE")){
+		EINSAETZE<-d
+	}else{
+		EINSAETZE<-concatenate.data.frames(EINSAETZE,d)
+	}
+}
 write.table(EINSAETZE,file = paste(SETTINGS$EXPORTFOLDER,"Einsaetze-alle.csv",sep=""),quote = F,sep = ";",row.names = F,col.names = T,fileEncoding = "utf8")
 cat("fertig!\n")
 
