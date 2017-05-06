@@ -38,3 +38,7 @@ Plots/*
 *.*log
 
 .Rproj.user
+
+# temporary directories
+/html
+/temp
