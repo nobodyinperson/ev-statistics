@@ -42,3 +42,5 @@ Plots/*
 # temporary directories
 /html
 /temp
+/deps
+/data

@@ -7,3 +7,11 @@ This is a quite heavy-handed approach. The database of [abrain's einsatzverwaltu
 That obsoletes the need of access to the database and enables the plotting to take place on another machine than the webhost.
 
 This repository is still in development state.
+
+# Requirements
+
+```bash
+sudo apt-get install gmsl
+sudo apt-get install python3 python3-lxml
+sudo apt-get install r-base r-cran-xml
+```
