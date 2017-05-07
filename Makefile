@@ -32,7 +32,7 @@ DATA_FILE = $(DATA_DIR)/all-data.$(CSV)
 
 # scripts
 OVERVIEW_PAGE_LINK_EXTRACTOR = $(SCRIPTS_DIR)/extract-pagelinks-from-overview.py
-SINGLE_PAGE_DATA_EXTRACTOR = $(SCRIPTS_DIR)/extract-data-from-single-page.R
+SINGLE_PAGE_DATA_EXTRACTOR = $(SCRIPTS_DIR)/extract-data-from-single-page.py
 SINGLE_PAGES_DEP_FILE_CREATOR = $(SCRIPTS_DIR)/linklist-to-targets.pl
 CSV_CONCATENATOR = $(SCRIPTS_DIR)/concatenate-csv-files.R
 
@@ -87,7 +87,7 @@ $(eval $(call zip,download_single_page_rule,$(SINGLE_PAGES_LINKS),$(SINGLE_PAGES
 
 # extract data from single page
 $(DATA_DIR)/%.csv: $(HTML_DIR)/%.$(HTML) | $(DATA_DIR)
-	$(SINGLE_PAGE_DATA_EXTRACTOR) $< $@ # TODO
+	$(SINGLE_PAGE_DATA_EXTRACTOR) -i $< -o $@
 
 # concatenate csv files into one file
 $(DATA_FILE): $(SINGLE_PAGES_CSV_FILES) | $(patsubst %/,%,$(dir $(DATA_FILE)))
