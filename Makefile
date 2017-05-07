@@ -28,6 +28,7 @@ TEMP_DIRS = $(TEMP_DIR) $(HTML_DIR) $(DEPS_DIR) $(PLOTS_DIR) $(DATA_DIR)
 OVERVIEW_PAGE_FILE = $(HTML_DIR)/overview.$(HTML)
 LINKLIST_FILE = $(HTML_DIR)/linklist.$(LIST)
 SINGLE_PAGES_DEP_FILE = $(DEPS_DIR)/single-pages.$(MK)
+DATA_FILE_RAW = $(DATA_DIR)/all-data-raw.$(CSV)
 DATA_FILE = $(DATA_DIR)/all-data.$(CSV)
 
 # scripts
@@ -35,6 +36,7 @@ OVERVIEW_PAGE_LINK_EXTRACTOR = $(SCRIPTS_DIR)/extract-pagelinks-from-overview.py
 SINGLE_PAGE_DATA_EXTRACTOR = $(SCRIPTS_DIR)/extract-data-from-single-page.py
 SINGLE_PAGES_DEP_FILE_CREATOR = $(SCRIPTS_DIR)/linklist-to-targets.pl
 CSV_CONCATENATOR = $(SCRIPTS_DIR)/concatenate-csv-files.R
+DATA_SANITIZER = $(SCRIPTS_DIR)/data-sanitizer.R
 
 ###############
 ### targets ###
@@ -90,8 +92,11 @@ $(DATA_DIR)/%.csv: $(HTML_DIR)/%.$(HTML) | $(DATA_DIR)
 	$(SINGLE_PAGE_DATA_EXTRACTOR) -i $< -o $@
 
 # concatenate csv files into one file
-$(DATA_FILE): $(SINGLE_PAGES_CSV_FILES) | $(patsubst %/,%,$(dir $(DATA_FILE)))
-	$(CSV_CONCATENATOR) $^ > $@ # TODO
+$(DATA_FILE_RAW): $(SINGLE_PAGES_CSV_FILES) | $(patsubst %/,%,$(dir $(DATA_FILE_RAW)))
+	$(CSV_CONCATENATOR) $^ > $@ 
+
+$(DATA_FILE): $(DATA_FILE_RAW) | $(patsubst %/,%,$(dir $(DATA_FILE)))
+	$(DATA_SANITIZER) $< $@ # TODO
 
 $(TEMP_DIRS): % :
 	mkdir -p $@

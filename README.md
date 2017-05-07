@@ -11,7 +11,6 @@ This repository is still in development state.
 # Requirements
 
 ```bash
-sudo apt-get install gmsl
 sudo apt-get install python3 python3-lxml
-sudo apt-get install r-base r-cran-xml
+sudo apt-get install r-base
 ```
