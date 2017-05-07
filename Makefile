@@ -14,6 +14,7 @@ TMP = tmp
 LIST = list
 MK = mk
 CSV = csv
+PNG = png
 
 # directories
 TEMP_DIR = temp
@@ -30,6 +31,7 @@ LINKLIST_FILE = $(HTML_DIR)/linklist.$(LIST)
 SINGLE_PAGES_DEP_FILE = $(DEPS_DIR)/single-pages.$(MK)
 DATA_FILE_RAW = $(DATA_DIR)/all-data-raw.$(CSV)
 DATA_FILE_SANE = $(DATA_DIR)/all-data-sane.$(CSV)
+AVAILABLE_YEARS_DEP_FILE = $(DEPS_DIR)/available-years.$(MK)
 
 # scripts
 OVERVIEW_PAGE_LINK_EXTRACTOR = $(SCRIPTS_DIR)/extract-pagelinks-from-overview.py
@@ -37,6 +39,7 @@ SINGLE_PAGE_DATA_EXTRACTOR = $(SCRIPTS_DIR)/extract-data-from-single-page.py
 SINGLE_PAGES_DEP_FILE_CREATOR = $(SCRIPTS_DIR)/linklist-to-targets.pl
 CSV_CONCATENATOR = $(SCRIPTS_DIR)/concatenate-csv-files.R
 DATA_SANITIZER = $(SCRIPTS_DIR)/data-sanitizer.R
+YEARS_EXTRACTOR = $(SCRIPTS_DIR)/years-extractor.R
 
 ###############
 ### targets ###
@@ -95,8 +98,16 @@ $(DATA_DIR)/%.csv: $(HTML_DIR)/%.$(HTML) | $(DATA_DIR)
 $(DATA_FILE_RAW): $(SINGLE_PAGES_CSV_FILES) | $(patsubst %/,%,$(dir $(DATA_FILE_RAW)))
 	$(CSV_CONCATENATOR) $^ > $@ 
 
+# sanitize the data
 $(DATA_FILE_SANE): $(DATA_FILE_RAW) | $(patsubst %/,%,$(dir $(DATA_FILE)))
 	$(DATA_SANITIZER) $< > $@
+
+# create a Makefile that defines the AVAILABLE_YEARS variable
+$(AVAILABLE_YEARS_DEP_FILE): $(DATA_FILE_SANE) | $(patsubst %/,%,$(dir $(AVAILABLE_YEARS_DEP_FILE)))
+	$(YEARS_EXTRACTOR) $< > $@
+
+# include file to get AVAILABLE_YEARS variable
+-include $(AVAILABLE_YEARS_DEP_FILE)
 
 $(TEMP_DIRS): % :
 	mkdir -p $@
