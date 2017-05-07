@@ -29,7 +29,7 @@ OVERVIEW_PAGE_FILE = $(HTML_DIR)/overview.$(HTML)
 LINKLIST_FILE = $(HTML_DIR)/linklist.$(LIST)
 SINGLE_PAGES_DEP_FILE = $(DEPS_DIR)/single-pages.$(MK)
 DATA_FILE_RAW = $(DATA_DIR)/all-data-raw.$(CSV)
-DATA_FILE = $(DATA_DIR)/all-data.$(CSV)
+DATA_FILE_SANE = $(DATA_DIR)/all-data-sane.$(CSV)
 
 # scripts
 OVERVIEW_PAGE_LINK_EXTRACTOR = $(SCRIPTS_DIR)/extract-pagelinks-from-overview.py
@@ -41,7 +41,7 @@ DATA_SANITIZER = $(SCRIPTS_DIR)/data-sanitizer.R
 ###############
 ### targets ###
 ###############
-all: $(DATA_FILE)
+all: $(DATA_FILE_SANE)
 
 # download overview page
 $(OVERVIEW_PAGE_FILE): | $(patsubst %/,%,$(dir $(OVERVIEW_PAGE_FILE)))
@@ -95,8 +95,8 @@ $(DATA_DIR)/%.csv: $(HTML_DIR)/%.$(HTML) | $(DATA_DIR)
 $(DATA_FILE_RAW): $(SINGLE_PAGES_CSV_FILES) | $(patsubst %/,%,$(dir $(DATA_FILE_RAW)))
 	$(CSV_CONCATENATOR) $^ > $@ 
 
-$(DATA_FILE): $(DATA_FILE_RAW) | $(patsubst %/,%,$(dir $(DATA_FILE)))
-	$(DATA_SANITIZER) $< $@ # TODO
+$(DATA_FILE_SANE): $(DATA_FILE_RAW) | $(patsubst %/,%,$(dir $(DATA_FILE)))
+	$(DATA_SANITIZER) $< > $@
 
 $(TEMP_DIRS): % :
 	mkdir -p $@
