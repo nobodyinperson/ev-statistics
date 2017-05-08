@@ -34,7 +34,7 @@ for(hour in Hours) {
           na.rm = T))
     }
 
-par(mar=c(3,2,3,2)+0.1)
+par(mar=c(3,2,3.5,2)+0.1)
 
 # Barplot
 MannschaftBarplot=barplot(MannschaftproZeit, # Werte
@@ -43,14 +43,13 @@ MannschaftBarplot=barplot(MannschaftproZeit, # Werte
     # tcl=0.5, # Achsenzeichen
     main=paste("Mittlere Mannschaftsstärke\nim Einsatz nach Uhrzeit *\n",
         PLOT_YEARS_TEXT),
-    cex.main=1,
     col=HourColors,
     xaxt="n",
+    yaxt="n",
     las=2,
-    cex.axis=0.8
 )
-axis(1,tick=F,
-    at=MannschaftBarplot,labels=paste(0:23,":00",sep=""),cex.axis=0.7,line=-1)
+axis(1,tick=F,at=MannschaftBarplot,labels=paste(0:23,":00",sep=""),line=-1)
+abline(h=axis(2,tick=F,las=1,line=-1),lty=2,lwd=2,col="#00000022")
 
 # Linien einzeichnen
 abline(h=9,col="#eeeeeeaa",lwd=17)

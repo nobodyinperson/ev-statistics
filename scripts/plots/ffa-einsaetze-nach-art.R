@@ -67,7 +67,7 @@ pie(x=EinsatzArtenHaeufigkeitenSortiert,
     main=paste("Einsatzhäufigkeit nach Einsatzart\n",PLOT_YEARS_TEXT),
     col=EinsatzArtenFarbenSortiert,
     radius=0.60,
-    cex=0.7
+    cex=par("cex.axis")
 )
 
 if(length(EinsatzArtenZuKleinIndex) > 0) {
@@ -79,7 +79,7 @@ if(length(EinsatzArtenZuKleinIndex) > 0) {
         col=EinsatzArtenFarbenSortiert[EinsatzArtenZuKleinIndex],
         border="black",
         bty="n",
-        cex=0.8,
+        cex=par("cex.axis"),
         fill=EinsatzArtenFarbenSortiert[EinsatzArtenZuKleinIndex]
     )
 }

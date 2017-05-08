@@ -36,7 +36,7 @@ MonateAnzahl <- sapply( seq_along(Monate),
 MonateAnteil = MonateAnzahl / sum(MonateAnzahl)
 
 # Barplot
-par(mar=c(5,2,3,2)+0.1)
+par(mar=c(4,2,3,2)+0.1)
 MonateBarplot = barplot(height=MonateAnteil,
     names.arg=Monate,
     col=MonateColors,
@@ -51,11 +51,14 @@ MonateBarplot = barplot(height=MonateAnteil,
 )
 # Anzahl hinschreiben
 if(length(PLOT_YEARS)==1) {
-    text(x = MonateBarplot,y=MonateAnteil,labels = MonateAnzahl,pos=3)
+    text(x = MonateBarplot,y=MonateAnteil
+        ,cex = par("cex.axis")
+        ,labels = MonateAnzahl,pos=3)
 } else {
     text(x = MonateBarplot,
         y=MonateAnteil,
-        labels = sprintf("%.1f",MonateAnzahl/length(PLOT_YEARS)),pos=3,cex=0.8)
+        labels = sprintf("%.1f",MonateAnzahl/length(PLOT_YEARS)),pos=3,
+        cex=par("cex.axis"))
 }
 
 plotFooter() # footer

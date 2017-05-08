@@ -36,6 +36,7 @@ text(
     ,y = EMERGENCIES_PER_YEAR
     ,labels = EMERGENCIES_PER_YEAR
     ,pos = 3
+    ,cex = par("cex.axis")
     )
 
 plotFooter() # footer

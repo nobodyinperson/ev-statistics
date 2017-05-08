@@ -69,9 +69,11 @@ MonateBarplot = barplot(height=EinsaetzeMonateArten,
     las=2
 )
 
-# legend("topleft",legend=EinsatzArtenHaupt,
-#     col=EinsatzArtenFarbeVector,lty=1,lwd=2,bty="n",cex=0.7)
-legend("topleft",legend="Farben wie in Einsatzarten-Grafik",bty="n",cex=0.7)
+legend("topleft"
+    ,legend="Farben wie in Einsatzarten-Grafik"
+    ,bty="n"
+    ,cex=par("cex.lab")
+    )
 
 plotFooter() # footer
 

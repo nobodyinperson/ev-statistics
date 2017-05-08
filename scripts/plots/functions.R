@@ -51,6 +51,7 @@ makeUtilities <- function() {
 
 makeUtilities() # make utilities
 
+FONTSIZE <- 11
 
 ### Plot functions ###
 # open plot device
@@ -59,7 +60,7 @@ openDevice <- function(...) {
             ,width=400
             ,height=300
             ,res=96
-            ,pointsize=12,
+            ,pointsize=FONTSIZE,
             ,bg=par("bg")
             ,...)
     }
@@ -71,19 +72,21 @@ plotSettings <- function() {
     quartzFonts(plotfont=c(
        "Noto Sans","Noto Sans Bold","Noto Sans Italic","Noto Sans Bold Italic"))
     par( bg = "white" ) # white background
-    par( cex.main = 1.1 )
-    par( ps = 12 )
+    par( cex = 1 )
+    par( cex.main = 1.2 )
+    par( cex.lab = 0.9 )
+    par( cex.axis = 0.8 )
+    par( ps = FONTSIZE )
     par( family = "plotfont" ) # font
     }
 
 # plot the footer
 plotFooter <- function() { 
-    cex.footer <- 0.8
     # signature
     mtext(side=1,line=par("mar")[1]-1,
                 text="www.feuerwehr-aumuehle.de",
                 adj=1, # right adjusted
-                cex=cex.footer,
+                cex=par("cex.lab"),
                 col="#333333"
     )
     # creation time
@@ -93,7 +96,7 @@ plotFooter <- function() {
                     text=paste(
                         "Stand:",strftime(x=Sys.time(),format="%d.%m.%Y")),
                     adj=0, # linksbündig
-                    cex=cex.footer,
+                    cex=par("cex.lab"),
                     col="#333333"
             )
         }

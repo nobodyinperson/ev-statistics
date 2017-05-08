@@ -58,12 +58,15 @@ EinsatzArtenDauerBarplot = barplot(
     
 )
 
-legend(x="topright",legend = "in Minuten",bty='n',cex=0.8)
+legend(x="topright",legend = "in Minuten",bty='n'
+    # ,cex=0.8
+    )
 text(x = EinsatzArtenDauerBarplot,
     y=EinsatzArtenDauer[rev(order(EinsatzArtenDauer))],
     labels = sprintf("%i",
         as.integer(EinsatzArtenDauer[rev(order(EinsatzArtenDauer))])),
-    pos=3,offset=0.2,cex=0.7
+    pos=3,offset=0.2
+    # ,cex=0.7
     )
 
 
@@ -77,7 +80,7 @@ text(x = EinsatzArtenDauerBarplot,
     col=gray(apply(col2rgb(col = EinsatzArtenFarbeCompVector),2,
         function(x){ifelse(mean(x)>256/2,256,0)}
         )/256)[rev(order(EinsatzArtenDauer))],
-    cex=0.6,
+    # cex=0.6,
     labels = EinsatzArtenHaupt[rev(order(EinsatzArtenDauer))]
     )
 

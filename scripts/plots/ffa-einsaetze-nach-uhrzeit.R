@@ -14,21 +14,33 @@ openDevice() # open device
 
 plotSettings() # plot settings
 
-UhrzeitCT <-
-    as.POSIXct(strftime(x=DATA$ZEIT,format = "%H:%M:%S"),format="%H:%M:%S")
+# UhrzeitCT <-
+#     as.POSIXct(strftime(x=DATA$ZEIT,format = "%H:%M:%S"),format="%H:%M:%S")
+Hour <- as.integer(strftime(x = DATA$ZEIT, format = "%H"))
 HourColorsSequence = sin(seq(f=0,t=pi,l=24))^1.8 # grayscale
 HourColors = gray(HourColorsSequence) # Die Farbskala
 # Grafikparameter
 par(mar=c(3,2,3,2)+0.1)
 # Histogramm
 # Terminierte / abgesprochene Einsätze rausgenommen (z.B. Brandsicherheitswache)
-hist(UhrzeitCT[!grepl("Termin",DATA$alarmierungsart)],breaks="hour",right=F,
-         main=paste("Einsatzhäufigkeit nach Uhrzeit *\n",PLOT_YEARS_TEXT),
-         xlab="",
-         yaxt="n",ylab="",
-         cex.axis=0.8,
-         col=HourColors
+hist(
+    x = Hour[!grepl("Termin",DATA$alarmierungsart)],
+    breaks=seq(f=0,t=24),
+    right=F,
+    main=paste("Einsatzhäufigkeit nach Uhrzeit *\n",PLOT_YEARS_TEXT),
+    xlab="",
+    yaxt="n",
+    xaxt="n",
+    ylab="",
+    col=HourColors
 )
+AllHours <- seq(f=0,t=24,by=2)
+axis(side = 1
+    ,line = -1
+    ,at=AllHours
+    ,labels = paste(AllHours,"00",sep=":")
+    ,tick = FALSE
+    )
 
 plotFooter() # footer
 
