@@ -12,6 +12,10 @@ include $(MAKE_UTILS_INCLUDES) # include the files
 OVERVIEW_PAGE_URL = http://www.feuerwehr-aumuehle.de/wopre/alle-einsaetze/alle-einsaetze-2
 OVERVIEW_PAGE_LINKS_XPATH = "//table[@class='einsatzverwaltung-reportlist']//a/@href"
 OVERVIEW_PAGE_DATE_XPATH = "//table[@class='einsatzverwaltung-reportlist']//td[@class='einsatz-column-date']/text()"
+# where to deploy the plot files on 'make deploy'
+# You can also specify this on the command line:
+# make deploy DEPLOY_DIR=/whatever/path/to/deploy
+DEPLOY_DIR = # empty by default. Raises an error on 'make deploy'
 
 # extensions
 HTML = html
@@ -146,6 +150,15 @@ endef
 $(foreach NAME,$(PLOT_NAMES),$(foreach YEAR,$(AVAILABLE_YEARS),$(eval $(call create_plot_rule,$(NAME),$(YEAR),$(YEAR)))))
 # create rules for whole year range
 $(foreach NAME,$(PLOT_NAMES),$(eval $(call create_plot_rule,$(NAME),$(firstword $(AVAILABLE_YEARS)),$(lastword $(AVAILABLE_YEARS)))))
+
+.PHONY:
+deploy: all
+ifeq ($(strip $(DEPLOY_DIR)),) # no DEPLOY_DIR given
+	$(error no DEPLOY_DIR given)
+else
+	mkdir -p $(DEPLOY_DIR)
+	cp -uv $(PLOTS_DIR)/* $(DEPLOY_DIR)
+endif
 
 $(TEMP_DIRS): % :
 	mkdir -p $@
