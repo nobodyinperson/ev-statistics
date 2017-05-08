@@ -3,10 +3,15 @@
 # include make-utils
 MAKE_UTILS_PATH = make-utils
 MAKE_UTILS_INCLUDES = $(wildcard $(realpath $(MAKE_UTILS_PATH))/*.mk)
+ifeq ($(strip $(MAKE_UTILS_INCLUDES)),)
+$(error no include files found in $(MAKE_UTILS_PATH))
+endif
 include $(MAKE_UTILS_INCLUDES) # include the files
 
 ### settings ###
 OVERVIEW_PAGE_URL = http://www.feuerwehr-aumuehle.de/wopre/alle-einsaetze/alle-einsaetze-2
+OVERVIEW_PAGE_LINKS_XPATH = "//table[@class='einsatzverwaltung-reportlist']//a/@href"
+OVERVIEW_PAGE_DATE_XPATH = "//table[@class='einsatzverwaltung-reportlist']//td[@class='einsatz-column-date']/text()"
 
 # extensions
 HTML = html
@@ -34,7 +39,7 @@ DATA_FILE_SANE = $(DATA_DIR)/all-data-sane.$(CSV)
 AVAILABLE_YEARS_DEP_FILE = $(DEPS_DIR)/available-years.$(MK)
 
 # scripts
-OVERVIEW_PAGE_LINK_EXTRACTOR = $(SCRIPTS_DIR)/extract-pagelinks-from-overview.py
+FIND_XPATH = $(SCRIPTS_DIR)/find-xpath.py
 SINGLE_PAGE_DATA_EXTRACTOR = $(SCRIPTS_DIR)/extract-data-from-single-page.py
 SINGLE_PAGES_DEP_FILE_CREATOR = $(SCRIPTS_DIR)/linklist-to-targets.pl
 CSV_CONCATENATOR = $(SCRIPTS_DIR)/concatenate-csv-files.R
@@ -52,7 +57,7 @@ $(OVERVIEW_PAGE_FILE): | $(patsubst %/,%,$(dir $(OVERVIEW_PAGE_FILE)))
 
 # extract linklist from overview page
 $(LINKLIST_FILE): $(OVERVIEW_PAGE_FILE) | $(patsubst %/,%,$(dir $(LINKLIST_FILE)))
-	$(OVERVIEW_PAGE_LINK_EXTRACTOR) -i $< -o $@
+	$(FIND_XPATH) -x $(OVERVIEW_PAGE_LINKS_XPATH) -i $< -o $@
 
 # create another Makefile SINGLE_PAGES_DEP_FILE that sets the variables:
 # 	- SINGLE_PAGES_STEMS
@@ -103,11 +108,15 @@ $(DATA_FILE_SANE): $(DATA_FILE_RAW) | $(patsubst %/,%,$(dir $(DATA_FILE)))
 	$(DATA_SANITIZER) $< > $@
 
 # create a Makefile that defines the AVAILABLE_YEARS variable
-$(AVAILABLE_YEARS_DEP_FILE): $(DATA_FILE_SANE) | $(patsubst %/,%,$(dir $(AVAILABLE_YEARS_DEP_FILE)))
-	$(YEARS_EXTRACTOR) $< > $@
+$(AVAILABLE_YEARS_DEP_FILE): $(OVERVIEW_PAGE_FILE) | $(patsubst %/,%,$(dir $(AVAILABLE_YEARS_DEP_FILE)))
+	$(FIND_XPATH) -x $(OVERVIEW_PAGE_DATE_XPATH) -i $< \
+		| perl -ne 'BEGIN{%y};$$y{$$m[0]}=1 if(@m=m/(\d{4})/);END{print join " ","AVAILABLE_YEARS","=",sort(keys %y),"\n"}' \
+		> $@
 
 # include file to get AVAILABLE_YEARS variable
 -include $(AVAILABLE_YEARS_DEP_FILE)
+
+# function to create plot rule
 
 $(TEMP_DIRS): % :
 	mkdir -p $@
