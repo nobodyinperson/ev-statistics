@@ -38,7 +38,7 @@ DATA$MANNSCHAFT.GESAMT <- sapply(
 
 # get overall topic
 DATA$EINSATZART.HAUPT <- 
-    gsub(x=DATA$art,pattern="^\\s*(\\w+)\\s*>.*$",replacement = "\\1")
+    gsub(x=DATA$art,pattern="^\\s*(.*?)\\s*>.*$",replacement = "\\1")
 
 # remove gallery from report
 DATA$einsatzbericht <- gsub(

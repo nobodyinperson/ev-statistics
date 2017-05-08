@@ -38,9 +38,10 @@ Plots/*
 *.*log
 
 .Rproj.user
+Rplots.pdf
 
 # temporary directories
 /html
-/temp
 /deps
 /data
+/plots
