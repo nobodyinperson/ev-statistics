@@ -19,7 +19,7 @@ UhrzeitCT <-
 HourColorsSequence = sin(seq(f=0,t=pi,l=24))^1.8 # grayscale
 HourColors = gray(HourColorsSequence) # Die Farbskala
 # Grafikparameter
-par(mar=c(4,2,3,2)+0.1)
+par(mar=c(3,2,3,2)+0.1)
 # Histogramm
 # Terminierte / abgesprochene Einsätze rausgenommen (z.B. Brandsicherheitswache)
 hist(UhrzeitCT[!grepl("Termin",DATA$alarmierungsart)],breaks="hour",right=F,

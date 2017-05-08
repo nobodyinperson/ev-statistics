@@ -14,7 +14,7 @@ openDevice() # open device
 
 plotSettings() # plot settings
 
-par(mar=c(5,1,4,1)+0.1) 
+par(mar=c(3,1,4,1)+0.1) 
 
 plot(y=rep(1,length(DATA$ZEIT))
     ,x = seq(

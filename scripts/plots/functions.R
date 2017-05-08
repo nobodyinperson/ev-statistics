@@ -59,6 +59,7 @@ openDevice <- function(...) {
             ,width=400
             ,height=300
             ,res=96
+            ,pointsize=12,
             ,bg=par("bg")
             ,...)
     }
@@ -70,6 +71,8 @@ plotSettings <- function() {
     quartzFonts(plotfont=c(
        "Noto Sans","Noto Sans Bold","Noto Sans Italic","Noto Sans Bold Italic"))
     par( bg = "white" ) # white background
+    par( cex.main = 1.1 )
+    par( ps = 12 )
     par( family = "plotfont" ) # font
     }
 

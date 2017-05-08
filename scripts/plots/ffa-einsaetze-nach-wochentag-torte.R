@@ -27,16 +27,17 @@ WochentageColors = c(
     colorRampPalette(c("darkgreen","green4"))(2))
 WochentageColors[WochentageHaeufigkeit==max(WochentageHaeufigkeit)] = "red"
 
-par(mar=c(0,0,4,0)) # Weniger Rand
+par(mar=c(1,1,3,1)) # Weniger Rand
 pie(WochentageHaeufigkeit,
     labels = ifelse(
         WochentageHaeufigkeit>0,
-        paste(Wochentage," (",sprintf("%.0f%%",WochentageHaeufigkeit*100),")",
+        paste(Wochentage," ",sprintf("%.0f%%",WochentageHaeufigkeit*100),
             sep=""),NA),
     col = WochentageColors,
     init.angle=180,
     cex = 0.8,
     clockwise=T,
+    radius = 0.7,
     main=paste("Einsatzhäufigkeit nach Wochentag *\n",PLOT_YEARS_TEXT),
 )
 

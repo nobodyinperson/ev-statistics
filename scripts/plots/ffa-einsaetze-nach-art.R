@@ -66,8 +66,8 @@ pie(x=EinsatzArtenHaeufigkeitenSortiert,
     init.angle=180, # turned
     main=paste("Einsatzhäufigkeit nach Einsatzart\n",PLOT_YEARS_TEXT),
     col=EinsatzArtenFarbenSortiert,
-    radius=0.65,
-    cex=0.8
+    radius=0.60,
+    cex=0.7
 )
 
 if(length(EinsatzArtenZuKleinIndex) > 0) {
