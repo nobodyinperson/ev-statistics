@@ -13,4 +13,5 @@ This repository is still in development state.
 ```bash
 sudo apt-get install python3 python3-lxml
 sudo apt-get install r-base
+sudo apt-get install fonts-noto
 ```

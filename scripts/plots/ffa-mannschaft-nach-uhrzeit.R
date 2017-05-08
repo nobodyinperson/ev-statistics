@@ -41,9 +41,9 @@ MannschaftBarplot=barplot(MannschaftproZeit, # Werte
     names.arg = strftime(Hours,format="%H:00"), # X-Achse
     # las=2,
     # tcl=0.5, # Achsenzeichen
-    main=paste("Mittlere Mannschaftsstärke im Einsatz nach Uhrzeit *\n",
+    main=paste("Mittlere Mannschaftsstärke\nim Einsatz nach Uhrzeit *\n",
         PLOT_YEARS_TEXT),
-    cex.main=0.9,
+    cex.main=1,
     col=HourColors,
     xaxt="n",
     las=2,

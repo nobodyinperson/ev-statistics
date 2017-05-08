@@ -66,16 +66,21 @@ openDevice <- function(...) {
 # general plot settings
 plotSettings <- function() { 
     OLD_PAR <<- par(no.readonly=T) # old parameters
+    # font
+    quartzFonts(plotfont=c(
+       "Noto Sans","Noto Sans Bold","Noto Sans Italic","Noto Sans Bold Italic"))
     par( bg = "white" ) # white background
+    par( family = "plotfont" ) # font
     }
 
 # plot the footer
 plotFooter <- function() { 
+    cex.footer <- 0.8
     # signature
     mtext(side=1,line=par("mar")[1]-1,
                 text="www.feuerwehr-aumuehle.de",
                 adj=1, # right adjusted
-                cex=0.9,
+                cex=cex.footer,
                 col="#333333"
     )
     # creation time
@@ -85,7 +90,7 @@ plotFooter <- function() {
                     text=paste(
                         "Stand:",strftime(x=Sys.time(),format="%d.%m.%Y")),
                     adj=0, # linksbündig
-                    cex=0.9,
+                    cex=cex.footer,
                     col="#333333"
             )
         }
