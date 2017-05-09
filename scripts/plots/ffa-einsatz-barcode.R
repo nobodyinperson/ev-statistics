@@ -6,10 +6,6 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-parseArgs() # parse CMD arguments
-
-readData() # read data
-
 openDevice() # open device
 
 plotSettings() # plot settings

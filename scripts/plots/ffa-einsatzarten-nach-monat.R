@@ -6,18 +6,9 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-parseArgs() # parse CMD arguments
-
-readData() # read data
-
 openDevice() # open device
 
 plotSettings() # plot settings
-
-Monate = c("Januar","Februar","März","April","Mai","Juni","Juli","August",
-    "September","Oktober","November","Dezember")
-Monate = c("Jan","Feb","März","April","Mai","Juni",
-    "Juli","Aug","Sep","Okt","Nov","Dez")
 
 EinsatzArtenHauptAlle = DATA$EINSATZART.HAUPT
 EinsatzArtenHaupt = unique(EinsatzArtenHauptAlle)
@@ -27,32 +18,22 @@ EinsatzArtenHaeufigkeit <- sapply(
 
 EinsatzArtenHaeufigkeit <-
     data.frame(Art=EinsatzArtenHaupt,Anzahl=EinsatzArtenHaeufigkeit)
-EinsatzArtenFarbe = list(
-    "Feuer" = "#d82900",
-    "Unwetterschäden" = "#00b615",
-    "Bahnunfall" = "red",
-    "Umweltschäden" = "#b84600",
-    "Technische Hilfe" = "darkblue",
-    "Verkehrsunfall" = "black",
-    "Hilfeleistung" = "#0098d8",
-    "Brandsicherheitswache" = "yellow",
-    "Rettung" = "orange",
-    "Sonstiges" = "white"
-)
 
-EinsatzArtenFarbeVector <- sapply(as.character(EinsatzArtenHaupt), function(x){
-            ifelse(is.null(EinsatzArtenFarbe[[x]]),NA,EinsatzArtenFarbe[[x]])
-            })
+EMERGENCY_KIND_COLORSVector <- sapply(as.character(EinsatzArtenHaupt), 
+    function(x){
+    ifelse(is.null(EMERGENCY_KIND_COLORS[[x]]),NA,EMERGENCY_KIND_COLORS[[x]])
+    })
 
 # Einsatzhäufigkeit nach Monat und Art in Matrix speichern
 # Zeile: Häufigkeit einer Einsatzart in jedem Monat
 # Spalte: Aufteilung Einsatzarten in einem Monat
 EinsaetzeMonateArten = 
-    matrix(0,ncol=length(Monate),nrow=length(EinsatzArtenHaupt))
+    matrix(0,ncol=length(MONTHS_SHORT),nrow=length(EinsatzArtenHaupt))
 for(art in EinsatzArtenHaupt){
-    for(monat in Monate) {
-        EinsaetzeMonateArten[match(art,EinsatzArtenHaupt),match(monat,Monate)] =
-            length(which(match(monat,Monate)==as.integer(
+    for(monat in MONTHS_SHORT) {
+        EinsaetzeMonateArten[
+            match(art,EinsatzArtenHaupt),match(monat,MONTHS_SHORT)] =
+            length(which(match(monat,MONTHS_SHORT)==as.integer(
             strftime(x = DATA$ZEIT,format="%m"))&art==EinsatzArtenHauptAlle))
     }
 }
@@ -60,8 +41,8 @@ for(art in EinsatzArtenHaupt){
 # Barplot
 par(mar=c(4,2,3,2)+0.1)
 MonateBarplot = barplot(height=EinsaetzeMonateArten,
-    names.arg=Monate,
-    col=EinsatzArtenFarbeVector,
+    names.arg=MONTHS_SHORT,
+    col=EMERGENCY_KIND_COLORSVector,
     main=paste("Verteilung der Einsatzarten im Jahr\n",PLOT_YEARS_TEXT),
     #xlab="Monat",
     yaxt="n",

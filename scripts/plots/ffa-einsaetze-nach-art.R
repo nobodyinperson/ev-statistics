@@ -6,10 +6,6 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-parseArgs() # parse CMD arguments
-
-readData() # read data
-
 openDevice() # open device
 
 plotSettings() # plot settings
@@ -24,27 +20,16 @@ EinsatzArtenHaeufigkeit <- sapply(
 
 EinsatzArtenHaeufigkeit <-
     data.frame(Art=EinsatzArtenHaupt,Anzahl=EinsatzArtenHaeufigkeit)
-EinsatzArtenFarbe = list(
-    "Feuer" = "#d82900",
-    "Unwetterschäden" = "#00b615",
-    "Bahnunfall" = "red",
-    "Umweltschäden" = "#b84600",
-    "Technische Hilfe" = "darkblue",
-    "Verkehrsunfall" = "black",
-    "Hilfeleistung" = "#0098d8",
-    "Brandsicherheitswache" = "yellow",
-    "Rettung" = "orange",
-    "Sonstiges" = "white"
-)
 
-EinsatzArtenFarbeVector <- sapply(as.character(EinsatzArtenHaupt), function(x){
-            ifelse(is.null(EinsatzArtenFarbe[[x]]),NA,EinsatzArtenFarbe[[x]])
-            })
+EMERGENCY_KIND_COLORSVector <- sapply(as.character(EinsatzArtenHaupt), 
+    function(x){
+    ifelse(is.null(EMERGENCY_KIND_COLORS[[x]]),NA,EMERGENCY_KIND_COLORS[[x]])
+    })
 
 # Torte zeichnen
 par(mar=c(0,0,2,0)) # Weniger Rand
-EinsatzArtenFarbenSortiert <-
-    EinsatzArtenFarbeVector[order(EinsatzArtenHaeufigkeit$Anzahl)]
+EMERGENCY_KIND_COLORSnSortiert <-
+    EMERGENCY_KIND_COLORSVector[order(EinsatzArtenHaeufigkeit$Anzahl)]
 EinsatzArtenLabelsSortiert <-
     EinsatzArtenHaeufigkeit$Art[order(EinsatzArtenHaeufigkeit$Anzahl)]
 EinsatzArtenHaeufigkeitenSortiert <-
@@ -65,7 +50,7 @@ pie(x=EinsatzArtenHaeufigkeitenSortiert,
     border = "black",
     init.angle=180, # turned
     main=paste("Einsatzhäufigkeit nach Einsatzart\n",PLOT_YEARS_TEXT),
-    col=EinsatzArtenFarbenSortiert,
+    col=EMERGENCY_KIND_COLORSnSortiert,
     radius=0.60,
     cex=par("cex.axis")
 )
@@ -76,11 +61,11 @@ if(length(EinsatzArtenZuKleinIndex) > 0) {
             EinsatzArtenLabelsSortiert[EinsatzArtenZuKleinIndex],
             " (",EinsatzArtenHaeufigkeitenSortiert[EinsatzArtenZuKleinIndex],
             ")",sep=""),
-        col=EinsatzArtenFarbenSortiert[EinsatzArtenZuKleinIndex],
+        col=EMERGENCY_KIND_COLORSnSortiert[EinsatzArtenZuKleinIndex],
         border="black",
         bty="n",
         cex=par("cex.axis"),
-        fill=EinsatzArtenFarbenSortiert[EinsatzArtenZuKleinIndex]
+        fill=EMERGENCY_KIND_COLORSnSortiert[EinsatzArtenZuKleinIndex]
     )
 }
 

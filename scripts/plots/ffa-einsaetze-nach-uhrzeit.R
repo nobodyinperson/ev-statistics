@@ -6,10 +6,6 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-parseArgs() # parse CMD arguments
-
-readData() # read data
-
 openDevice() # open device
 
 plotSettings() # plot settings
@@ -24,7 +20,7 @@ par(mar=c(3,2,3,2)+0.1)
 # Histogramm
 # Terminierte / abgesprochene Einsätze rausgenommen (z.B. Brandsicherheitswache)
 hist(
-    x = Hour[!grepl("Termin",DATA$alarmierungsart)],
+    x = Hour[!SCHEDULED],
     breaks=seq(f=0,t=24),
     right=F,
     main=paste("Einsatzhäufigkeit nach Uhrzeit *\n",PLOT_YEARS_TEXT),

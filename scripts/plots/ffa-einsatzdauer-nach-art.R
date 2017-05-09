@@ -8,10 +8,6 @@ source(paste(THIS_DIR,"functions.R",sep="/"))
 
 library(graphics)
 
-parseArgs() # parse CMD arguments
-
-readData() # read data
-
 openDevice() # open device
 
 plotSettings() # plot settings
@@ -19,21 +15,10 @@ plotSettings() # plot settings
 EinsatzArtenHauptAlle = DATA$EINSATZART.HAUPT
 EinsatzArtenHaupt = unique(EinsatzArtenHauptAlle)
 
-EinsatzArtenFarbe = list(
-    "Feuer" = "#d82900",
-    "Unwetterschäden" = "#00b615",
-    "Bahnunfall" = "red",
-    "Umweltschäden" = "#b84600",
-    "Technische Hilfe" = "darkblue",
-    "Verkehrsunfall" = "black",
-    "Hilfeleistung" = "#0098d8",
-    "Brandsicherheitswache" = "yellow",
-    "Rettung" = "orange",
-    "Sonstiges" = "white"
-)
-
-EinsatzArtenFarbeVector <- sapply(as.character(EinsatzArtenHaupt), function(x){
-            ifelse(is.null(EinsatzArtenFarbe[[x]]),NA,EinsatzArtenFarbe[[x]])
+EMERGENCY_KIND_COLORSVector <- sapply(as.character(EinsatzArtenHaupt), 
+            function(x){
+            ifelse(is.null(EMERGENCY_KIND_COLORS[[x]]),
+            NA,EMERGENCY_KIND_COLORS[[x]])
             })
 
 EinsatzArtenDauer <- sapply( EinsatzArtenHaupt, 
@@ -42,18 +27,19 @@ EinsatzArtenDauer <- sapply( EinsatzArtenHaupt,
             na.rm = T)
         } )
 
-EinsatzArtenFarbeCompVector <- 
-    sapply(EinsatzArtenFarbeVector,
+EMERGENCY_KIND_COLORSCompVector <- 
+    sapply(EMERGENCY_KIND_COLORSVector,
         function(color)do.call(rgb, as.list(1 - col2rgb(color) / 255)))
 
 # Barplot
 par(mar=c(1,1,3.5,1)+0.1)
+ord <- rev(order(EinsatzArtenDauer))
 EinsatzArtenDauerBarplot = barplot(
-    height=EinsatzArtenDauer[rev(order(EinsatzArtenDauer))],
-    names.arg=EinsatzArtenHaupt[rev(order(EinsatzArtenDauer))],
-    col=EinsatzArtenFarbeVector[rev(order(EinsatzArtenDauer))],
-    main=paste("Mittlere Einsatzdauer\nnach Einsatzart\n",PLOT_YEARS_TEXT),
-    ylab="mittl. Einsatzdauer in Stunden",
+    height=EinsatzArtenDauer[ord],
+    names.arg=EinsatzArtenHaupt[ord],
+    col=EMERGENCY_KIND_COLORSVector[ord],
+    main=paste("Durchschn. Einsatzdauer\nnach Einsatzart\n",PLOT_YEARS_TEXT),
+    ylab="mittl. Einsatzdauer in Minuten",
     horiz = T,
     # space = 0.5,
     yaxt="n",
@@ -71,34 +57,34 @@ legend(x="topright"
     ,cex = par("cex.lab")
     )
 text(y = EinsatzArtenDauerBarplot,
-    x=EinsatzArtenDauer[rev(order(EinsatzArtenDauer))],
-    labels = sprintf("%i",
-        as.integer(EinsatzArtenDauer[rev(order(EinsatzArtenDauer))]))
+    x=EinsatzArtenDauer[ord],
+    labels = sprintf("%i", as.integer(EinsatzArtenDauer[ord]))
     ,pos=4
+    ,font=2
     ,offset=0.5
     ,cex=par("cex.axis")
     )
 
-name_width <- sapply(EinsatzArtenHaupt[rev(order(EinsatzArtenDauer))],strwidth)
-# text_x <- EinsatzArtenDauer[rev(order(EinsatzArtenDauer))]/2 # inside by default
-# text_x[EinsatzArtenDauer[rev(order(EinsatzArtenDauer))]<name_width] <-
-#     EinsatzArtenDauer[rev(order(EinsatzArtenDauer))] + name_width/2
+name_width <- sapply(EinsatzArtenHaupt[ord],strwidth)
+# text_x <- EinsatzArtenDauer[ord]/2 # inside by default
+# text_x[EinsatzArtenDauer[ord]<name_width] <-
+#     EinsatzArtenDauer[ord] + name_width/2
 # Arten hinschreiben
-for (i in seq_along(EinsatzArtenHaupt[rev(order(EinsatzArtenDauer))])) {
-    quot <- name_width[i] / EinsatzArtenDauer[rev(order(EinsatzArtenDauer))][i]
+for (i in seq_along(EinsatzArtenHaupt[ord])) {
+    quot <- name_width[i] / EinsatzArtenDauer[ord][i]
     this.cex <- 
         if(quot > 1) par("cex.axis") / quot
         else         par("cex.axis")
     text(y = EinsatzArtenDauerBarplot[i],
-        x=EinsatzArtenDauer[rev(order(EinsatzArtenDauer))][i]/2,
+        x=EinsatzArtenDauer[ord][i]/2,
         # srt=90,
         font=2,
         adj=0.5,
-        col=gray(apply(col2rgb(col = EinsatzArtenFarbeCompVector),2,
+        col=gray(apply(col2rgb(col = EMERGENCY_KIND_COLORSCompVector),2,
             function(x){ifelse(mean(x)>256/2,256,0)}
-            )/256)[rev(order(EinsatzArtenDauer))][i],
+            )/256)[ord][i],
         cex=this.cex,
-        labels = EinsatzArtenHaupt[rev(order(EinsatzArtenDauer))][i]
+        labels = EinsatzArtenHaupt[ord][i]
         )
     }
 

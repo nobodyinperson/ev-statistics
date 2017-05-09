@@ -6,10 +6,6 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-parseArgs() # parse CMD arguments
-
-readData() # read data
-
 openDevice() # open device
 
 plotSettings() # plot settings
@@ -29,8 +25,7 @@ MannschaftproZeit = c()
 for(hour in Hours) {
     MannschaftproZeit = 
         c(MannschaftproZeit,
-          mean(DATA$MANNSCHAFT.GESAMT[which(
-          EinsaetzeHours==hour&!grepl("Termin",DATA$alarmierungsart))],
+          mean(DATA$MANNSCHAFT.GESAMT[which(EinsaetzeHours==hour&!SCHEDULED)],
           na.rm = T))
     }
 
@@ -41,7 +36,7 @@ MannschaftBarplot=barplot(MannschaftproZeit, # Werte
     names.arg = strftime(Hours,format="%H:00"), # X-Achse
     # las=2,
     # tcl=0.5, # Achsenzeichen
-    main=paste("Mittlere Mannschaftsstärke\nim Einsatz nach Uhrzeit *\n",
+    main=paste("Durchschn. Mannschaftsstärke\nim Einsatz nach Uhrzeit *\n",
         PLOT_YEARS_TEXT),
     col=HourColors,
     xaxt="n",

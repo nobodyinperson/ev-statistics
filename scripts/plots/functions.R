@@ -3,8 +3,8 @@
 # set global variables from command line arguments
 parseArgs <- function(args=commandArgs(trailingOnly=TRUE)) {
     DATA_FILE <<- args[1]
-    YEAR_START <<- strtoi(args[2])
-    YEAR_END <<- strtoi(args[3])
+    YEAR_START <<- as.integer(args[2])
+    YEAR_END <<- as.integer(args[3])
     PLOT_FILE <<- args[4]
 
     stopifnot( is.integer(YEAR_START) )
@@ -12,8 +12,6 @@ parseArgs <- function(args=commandArgs(trailingOnly=TRUE)) {
     stopifnot( file.exists(DATA_FILE) )
     stopifnot( is.character(PLOT_FILE) )
     }
-
-parseArgs() # parse arguments
 
 ### Data functions ###
 readData <- function() { 
@@ -29,14 +27,14 @@ readData <- function() {
     }
 
 cutData <- function() { 
-    year <- strtoi(strftime(DATA$ZEIT,format="%Y"))
+    year <- as.integer(strftime(DATA$ZEIT,format="%Y"))
     inrange <- YEAR_START <= year & year <= YEAR_END
     DATA <<- DATA[inrange,] # only keep rows in range
     }
 
 # utilities
 makeUtilities <- function() { 
-    THIS_YEAR <<- strtoi(strftime(Sys.time(),format="%Y")) # the actual year
+    THIS_YEAR <<- as.integer(strftime(Sys.time(),format="%Y")) # the actual year
     PLOT_YEARS <<- seq(YEAR_START,YEAR_END) # plotted years
     PLOT_YEARS_TEXT <<- 
 		if(length(PLOT_YEARS) == 1) { # only one year
@@ -47,15 +45,36 @@ makeUtilities <- function() {
 		} else { # multiple years
 			paste("von",min(PLOT_YEARS),"bis",max(PLOT_YEARS))
 		}
+
+    EMERGENCY_KIND_COLORS <<- list(
+        "Feuer" = "#d82900",
+        "Unwetterschäden" = "#00b615",
+        "Bahnunfall" = "red",
+        "Umweltschäden" = "#b84600",
+        "Technische Hilfe" = "darkblue",
+        "Verkehrsunfall" = "black",
+        "Hilfeleistung" = "#0098d8",
+        "Brandsicherheitswache" = "yellow",
+        "Rettung" = "orange",
+        "Sonstiges" = "white"
+        )
+
+    DAYS <<- c("Montag","Dienstag","Mittwoch","Donnerstag","Freitag",
+        "Samstag","Sonntag")
+    MONTHS <<- c("Januar","Februar","März","April","Mai","Juni","Juli",
+        "August","September","Oktober","November","Dezember")
+    MONTHS_SHORT <<- c("Jan","Feb","März","April","Mai","Juni",
+        "Juli","Aug","Sep","Okt","Nov","Dez")
+
+    SCHEDULED <<- grepl("termin",DATA$alarmierungsart,ignore.case=T)
     }
 
-makeUtilities() # make utilities
-
-FONTSIZE <- 11
+FONTSIZE <<- 11
 
 ### Plot functions ###
 # open plot device
 openDevice <- function(...) { 
+    options( device = "png" ) # this somehow prevents Rplots.pdf creation...
     png(file=PLOT_FILE
             ,width=400
             ,height=300
@@ -109,3 +128,18 @@ closeDevice <- function() {
         }
     rm(dev)
     }
+
+
+#############
+### Do it ###
+#############
+parseArgs() # parse CMD arguments
+
+readData() # read data
+
+makeUtilities() # calculate utilities
+
+openDevice() # open device
+
+plotSettings() # plot settings
+

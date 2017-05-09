@@ -6,19 +6,15 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-readData() # read data
-
-EMERGENCIES_PER_YEAR <- c()
-for(year in PLOT_YEARS) { 
-    EMERGENCIES_PER_YEAR[match(year,PLOT_YEARS)] <-
-        length(which(strftime(DATA$ZEIT,format="%Y")==year))
-    }
-
 openDevice() # open device
 
 plotSettings() # plot settings
 
 par(mar=c(4,2,4,2)+0.1)
+
+EMERGENCIES_PER_YEAR <- sapply(PLOT_YEARS,function(year){ 
+    length(which(strftime(DATA$ZEIT,format="%Y")==year))
+    })
 
 # barplot
 BARPLOT_HEIGHTS = barplot(

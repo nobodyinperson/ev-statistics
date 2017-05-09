@@ -6,10 +6,6 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-parseArgs() # parse CMD arguments
-
-readData() # read data
-
 openDevice() # open device
 
 plotSettings() # plot settings
@@ -17,28 +13,25 @@ plotSettings() # plot settings
 # Einsatzzeiten aller vollen Jahre
 JahreEinsaetzZeiten <-
     DATA$ZEIT[as.numeric(strftime(x = DATA$ZEIT,format = "%Y"))%in%PLOT_YEARS]
-# Die Monate dazu
+# Die MONTHS_SHORT dazu
 JahreMonate = as.numeric(strftime(x = JahreEinsaetzZeiten,format = "%m"))
 JahreEinsaetzZeiten<-NULL # Speicherplatz sparen
 
-Monate = c("Januar","Februar","März","April","Mai","Juni","Juli","August",
-    "September","Oktober","November","Dezember")
-Monate = c("Jan","Feb","März","April","Mai","Juni",
-    "Juli","Aug","Sep","Okt","Nov","Dez")
 MonateColors <-
-    colorRampPalette(c("gray","green4","yellow","brown","gray"))(length(Monate))
+    colorRampPalette(
+        c("gray","green4","yellow","brown","gray"))(length(MONTHS_SHORT))
 # MonateAnzahl = c()
-# for(monat in 1:12) { # Alle Monate durchgehen
+# for(monat in 1:12) { # Alle MONTHS_SHORT durchgehen
 #     MonateAnzahl[monat] = 
 # } ;rm(monat)
-MonateAnzahl <- sapply( seq_along(Monate), 
+MonateAnzahl <- sapply( seq_along(MONTHS_SHORT), 
     function(monat) length(which(JahreMonate==monat)) )
 MonateAnteil = MonateAnzahl / sum(MonateAnzahl)
 
 # Barplot
 par(mar=c(4,2,3,2)+0.1)
 MonateBarplot = barplot(height=MonateAnteil,
-    names.arg=Monate,
+    names.arg=MONTHS_SHORT,
     col=MonateColors,
     main=paste(
         ifelse(length(PLOT_YEARS)==1,

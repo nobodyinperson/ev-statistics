@@ -6,19 +6,13 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-parseArgs() # parse CMD arguments
-
-readData() # read data
-
 openDevice() # open device
 
 plotSettings() # plot settings
 
 # Geplante / terminierte Einsätze ausgenommen (z.B. Brandsicherheitswache)
 WochentageEinsaetze <- strftime(
-    x = DATA$ZEIT[!grepl("Termin",DATA$alarmierungsart)], format = "%u")
-Wochentage <-
-    c("Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag")
+    x = DATA$ZEIT[!SCHEDULED], format = "%u")
 WochentageHaeufigkeit <-
     sapply( 1:7, function(tag) length(which(WochentageEinsaetze==tag)) )
 WochentageHaeufigkeit = WochentageHaeufigkeit / length(WochentageEinsaetze)
@@ -31,7 +25,7 @@ par(mar=c(1,1,3,1)) # Weniger Rand
 pie(WochentageHaeufigkeit,
     labels = ifelse(
         WochentageHaeufigkeit>0,
-        paste(Wochentage," ",sprintf("%.0f%%",WochentageHaeufigkeit*100),
+        paste(DAYS," ",sprintf("%.0f%%",WochentageHaeufigkeit*100),
             sep=""),NA),
     col = WochentageColors,
     init.angle=180,
