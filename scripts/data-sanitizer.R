@@ -13,8 +13,10 @@ DATA <- read.csv(INPUT,sep="|",quote="'")
 ### sanitize data ###
 #####################
 # drop unnecessary columns
-DATA = DATA[,-grep("(bilder)|(mysteri)|(berichte)|(presse)|(video)",
-    colnames(DATA),ignore.case = T)]
+unnecessary_cols <- 
+    grep(pattern="(bilder)|(mysteri)|(berichte)|(presse)|(video)", 
+        x=colnames(DATA),ignore.case = T)
+if(length(unnecessary_cols)>0) DATA <- DATA[,-unnecessary_cols]
 
 # get full time from date and time
 DATA$ZEIT <- as.POSIXct(

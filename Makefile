@@ -148,8 +148,10 @@ endef
 
 # create rules for each plot and year
 $(foreach NAME,$(PLOT_NAMES),$(foreach YEAR,$(AVAILABLE_YEARS),$(eval $(call create_plot_rule,$(NAME),$(YEAR),$(YEAR)))))
+ifneq ($(firstword $(AVAILABLE_YEARS)),$(lastword $(AVAILABLE_YEARS)))
 # create rules for whole year range
 $(foreach NAME,$(PLOT_NAMES),$(eval $(call create_plot_rule,$(NAME),$(firstword $(AVAILABLE_YEARS)),$(lastword $(AVAILABLE_YEARS)))))
+endif
 
 .PHONY:
 deploy: all
