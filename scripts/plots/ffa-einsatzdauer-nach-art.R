@@ -6,6 +6,8 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
+library(graphics)
+
 parseArgs() # parse CMD arguments
 
 readData() # read data
@@ -45,44 +47,60 @@ EinsatzArtenFarbeCompVector <-
         function(color)do.call(rgb, as.list(1 - col2rgb(color) / 255)))
 
 # Barplot
-par(mar=c(2,1,3,1)+0.1)
+par(mar=c(1,1,3.5,1)+0.1)
 EinsatzArtenDauerBarplot = barplot(
     height=EinsatzArtenDauer[rev(order(EinsatzArtenDauer))],
     names.arg=EinsatzArtenHaupt[rev(order(EinsatzArtenDauer))],
     col=EinsatzArtenFarbeVector[rev(order(EinsatzArtenDauer))],
     main=paste("Mittlere Einsatzdauer\nnach Einsatzart\n",PLOT_YEARS_TEXT),
     ylab="mittl. Einsatzdauer in Stunden",
+    horiz = T,
+    # space = 0.5,
     yaxt="n",
     xaxt="n",
-    ylim=c(0,max(EinsatzArtenDauer,na.rm=T)*1.1),
+    xlim=c(0,max(EinsatzArtenDauer,na.rm=T)*1.1),
     
 )
+# axisticks <- axis(side=1,line=-1,tick=F)
+# abline(v=axisticks,lty=2,lwd=2,col="#00000022")
 
-legend(x="topright",legend = "in Minuten",bty='n'
-    # ,cex=0.8
+legend(x="topright"
+    ,legend = "in Minuten"
+    # ,bty='n'
+    ,box.col = "white",
+    ,cex = par("cex.lab")
     )
-text(x = EinsatzArtenDauerBarplot,
-    y=EinsatzArtenDauer[rev(order(EinsatzArtenDauer))],
+text(y = EinsatzArtenDauerBarplot,
+    x=EinsatzArtenDauer[rev(order(EinsatzArtenDauer))],
     labels = sprintf("%i",
-        as.integer(EinsatzArtenDauer[rev(order(EinsatzArtenDauer))])),
-    pos=3,offset=0.2
-    # ,cex=0.7
+        as.integer(EinsatzArtenDauer[rev(order(EinsatzArtenDauer))]))
+    ,pos=4
+    ,offset=0.5
+    ,cex=par("cex.axis")
     )
 
-
+name_width <- sapply(EinsatzArtenHaupt[rev(order(EinsatzArtenDauer))],strwidth)
+# text_x <- EinsatzArtenDauer[rev(order(EinsatzArtenDauer))]/2 # inside by default
+# text_x[EinsatzArtenDauer[rev(order(EinsatzArtenDauer))]<name_width] <-
+#     EinsatzArtenDauer[rev(order(EinsatzArtenDauer))] + name_width/2
 # Arten hinschreiben
-text(x = EinsatzArtenDauerBarplot,
-    y=EinsatzArtenDauer[rev(order(EinsatzArtenDauer))]/2,
-    # 		 y=0,
-    srt=90,
-    font=2,
-    adj=0.5,
-    col=gray(apply(col2rgb(col = EinsatzArtenFarbeCompVector),2,
-        function(x){ifelse(mean(x)>256/2,256,0)}
-        )/256)[rev(order(EinsatzArtenDauer))],
-    # cex=0.6,
-    labels = EinsatzArtenHaupt[rev(order(EinsatzArtenDauer))]
-    )
+for (i in seq_along(EinsatzArtenHaupt[rev(order(EinsatzArtenDauer))])) {
+    quot <- name_width[i] / EinsatzArtenDauer[rev(order(EinsatzArtenDauer))][i]
+    this.cex <- 
+        if(quot > 1) par("cex.axis") / quot
+        else         par("cex.axis")
+    text(y = EinsatzArtenDauerBarplot[i],
+        x=EinsatzArtenDauer[rev(order(EinsatzArtenDauer))][i]/2,
+        # srt=90,
+        font=2,
+        adj=0.5,
+        col=gray(apply(col2rgb(col = EinsatzArtenFarbeCompVector),2,
+            function(x){ifelse(mean(x)>256/2,256,0)}
+            )/256)[rev(order(EinsatzArtenDauer))][i],
+        cex=this.cex,
+        labels = EinsatzArtenHaupt[rev(order(EinsatzArtenDauer))][i]
+        )
+    }
 
 plotFooter() # footer
 
