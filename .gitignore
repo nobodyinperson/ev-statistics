@@ -38,7 +38,7 @@ Plots/*
 *.*log
 
 .Rproj.user
-Rplots.pdf
+Rplot*.*
 
 # temporary directories
 /html

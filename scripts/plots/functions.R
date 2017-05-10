@@ -2,14 +2,18 @@
 # Parse arguments
 # set global variables from command line arguments
 parseArgs <- function(args=commandArgs(trailingOnly=TRUE)) {
-    DATA_FILE <<- args[1]
-    YEAR_START <<- as.integer(args[2])
-    YEAR_END <<- as.integer(args[3])
-    PLOT_FILE <<- args[4]
+		if(!exists("DATA_FILE"))
+		    DATA_FILE <<- args[1]
+		if(!exists("YEAR_START"))
+		    YEAR_START <<- as.integer(args[2])
+		if(!exists("YEAR_END"))
+		    YEAR_END <<- as.integer(args[3])
+		if(!exists("PLOT_FILE"))
+		    PLOT_FILE <<- args[4]
 
+    stopifnot( file.exists(DATA_FILE) )
     stopifnot( is.integer(YEAR_START) )
     stopifnot( is.integer(YEAR_END) )
-    stopifnot( file.exists(DATA_FILE) )
     stopifnot( is.character(PLOT_FILE) )
     }
 
@@ -74,12 +78,12 @@ FONTSIZE <<- 11
 ### Plot functions ###
 # open plot device
 openDevice <- function(...) { 
-    options( device = "png" ) # this somehow prevents Rplots.pdf creation...
+    # options( device = "png" ) # this somehow prevents Rplots.pdf creation...
     png(file=PLOT_FILE
             ,width=400
             ,height=300
             ,res=96
-            ,pointsize=FONTSIZE,
+            ,pointsize=FONTSIZE
             ,bg=par("bg")
             ,...)
     }
@@ -94,6 +98,7 @@ plotSettings <- function() {
     par( cex = 1 )
     par( cex.main = 1.2 )
     par( cex.lab = 0.9 )
+    par( cex.sub = 0.9 )
     par( cex.axis = 0.8 )
     par( ps = FONTSIZE )
     par( family = "plotfont" ) # font
