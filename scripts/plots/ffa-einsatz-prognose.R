@@ -87,7 +87,7 @@ text(x=mean(usr[c(1,2)])
 text(x=mean(usr[c(1,2)])
     ,y=usr[3]+2.2*diff(usr[c(3,4)])/3
     ,font=2
-    ,labels = paste("nächste 30 Tage: ",MONTH_PROBABILITY[2],"%")
+    ,labels = paste("nächste 4 Wochen: ",MONTH_PROBABILITY[2],"%")
 )
 
 plotFooter() # footer
