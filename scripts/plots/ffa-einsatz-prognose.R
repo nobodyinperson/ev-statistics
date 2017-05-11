@@ -69,7 +69,8 @@ plot(runif(1000),runif(1000)
 		,bg="green"
     )
 mtext(side=1,line=1
-    ,text = paste("Daten",PLOT_YEARS_TEXT,"")
+    ,text = paste("Daten",PLOT_YEARS_TEXT,"\n",
+        "Annahme: Statistik bleibt gleich")
     ,cex = par("cex.sub")
     )
 
