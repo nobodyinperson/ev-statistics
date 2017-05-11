@@ -14,8 +14,18 @@ source(paste(THIS_DIR,"functions.R",sep="/"))
 
 dropScheduled() # drop scheduled
 
+# constants
+SECONDS_PER_HOUR <- 60 * 60
+SECONDS_PER_DAY <- SECONDS_PER_HOUR * 24
+SECONDS_PER_WEEK <- SECONDS_PER_DAY * 7
+SECONDS_PER_MONTH <- SECONDS_PER_WEEK * 4
+
+TIME_DIFF_THRESHOLD <- SECONDS_PER_HOUR # time diff threshold to drop
+
 # calculate difference between emergencies
-TIME_DIFF <- abs(diff(DATA$ZEIT))
+TIME_DIFF <- abs(as.integer(diff(DATA$ZEIT)))
+# drop too small time differences
+TIME_DIFF <- TIME_DIFF[TIME_DIFF>TIME_DIFF_THRESHOLD]
 TIME_SINCE_LAST_EMERGENCY <- as.integer(Sys.time())-as.integer(max(DATA$ZEIT))
 
 ENSEMBLE_SIZE <- 10000
@@ -27,16 +37,9 @@ ENSEMBLE_DIFF <- t(sapply(seq(ENSEMBLE_SIZE),function(nr)sample(TIME_DIFF)))
 colnames(ENSEMBLE_DIFF)<-COL_NAMES
 rownames(ENSEMBLE_DIFF)<-ROW_NAMES
 
-# quality check: histogram stays the same
-
 # cumulate time differences
 ENSEMBLE_TIME <- t(apply(ENSEMBLE_DIFF,1,cumsum))
 stopifnot(all(ENSEMBLE_TIME[1,]==cumsum(ENSEMBLE_DIFF[1,]))) # quality check
-
-
-SECONDS_PER_DAY <- 60 * 60 * 24
-SECONDS_PER_WEEK <- SECONDS_PER_DAY * 7
-SECONDS_PER_MONTH <- SECONDS_PER_WEEK * 4
 
 probability <- function(timespan) { 
         low <- length(which(
@@ -51,11 +54,18 @@ probability <- function(timespan) {
 }
 
 round_to <- function(x,base=5) round(round(x/base)*base)
-round_percent <- function(x) ceiling(x)-1 # like floor, but don't reach 100
+# like round, but don't reach 100
+round_percent <- function(x) sapply(round(x),function(y)min(y,99)) 
 
 DAY_PROBABILITY <- round_percent(probability(SECONDS_PER_DAY)*100)
+# cat("day probability:\n")
+# print(DAY_PROBABILITY)
 WEEK_PROBABILITY <- round_percent(probability(SECONDS_PER_WEEK)*100)
+# cat("week probability:\n")
+# print(WEEK_PROBABILITY)
 MONTH_PROBABILITY <- round_percent(probability(SECONDS_PER_MONTH)*100)
+# cat("month probability:\n")
+# print(MONTH_PROBABILITY)
 
 par(mar=c(4,0,3,0))
 plot(runif(1000),runif(1000)
