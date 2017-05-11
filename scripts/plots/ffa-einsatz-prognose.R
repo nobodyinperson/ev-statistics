@@ -23,7 +23,7 @@ SECONDS_PER_MONTH <- SECONDS_PER_WEEK * 4
 TIME_DIFF_THRESHOLD <- SECONDS_PER_HOUR # time diff threshold to drop
 
 # calculate difference between emergencies
-TIME_DIFF <- abs(as.integer(diff(DATA$ZEIT)))
+TIME_DIFF <- abs(diff(as.integer(DATA$ZEIT)))
 # drop too small time differences
 TIME_DIFF <- TIME_DIFF[TIME_DIFF>TIME_DIFF_THRESHOLD]
 TIME_SINCE_LAST_EMERGENCY <- as.integer(Sys.time())-as.integer(max(DATA$ZEIT))
