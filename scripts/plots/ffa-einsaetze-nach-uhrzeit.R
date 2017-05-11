@@ -6,9 +6,7 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-openDevice() # open device
-
-plotSettings() # plot settings
+dropScheduled() # drop scheduled
 
 # UhrzeitCT <-
 #     as.POSIXct(strftime(x=DATA$ZEIT,format = "%H:%M:%S"),format="%H:%M:%S")
@@ -20,10 +18,10 @@ par(mar=c(3,2,3,2)+0.1)
 # Histogramm
 # Terminierte / abgesprochene Einsätze rausgenommen (z.B. Brandsicherheitswache)
 hist(
-    x = Hour[!SCHEDULED],
+    x = Hour,
     breaks=seq(f=0,t=24),
     right=F,
-    main=paste("Einsatzhäufigkeit nach Uhrzeit *\n",PLOT_YEARS_TEXT),
+    main=paste("Einsatzhäufigkeit nach Uhrzeit\n",PLOT_YEARS_TEXT),
     xlab="",
     yaxt="n",
     xaxt="n",

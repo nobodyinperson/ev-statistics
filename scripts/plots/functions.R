@@ -2,14 +2,14 @@
 # Parse arguments
 # set global variables from command line arguments
 parseArgs <- function(args=commandArgs(trailingOnly=TRUE)) {
-		if(!exists("DATA_FILE"))
-		    DATA_FILE <<- args[1]
-		if(!exists("YEAR_START"))
-		    YEAR_START <<- as.integer(args[2])
-		if(!exists("YEAR_END"))
-		    YEAR_END <<- as.integer(args[3])
-		if(!exists("PLOT_FILE"))
-		    PLOT_FILE <<- args[4]
+    if(!exists("DATA_FILE"))
+        DATA_FILE <<- args[1]
+    if(!exists("YEAR_START"))
+        YEAR_START <<- as.integer(args[2])
+    if(!exists("YEAR_END"))
+        YEAR_END <<- as.integer(args[3])
+    if(!exists("PLOT_FILE"))
+        PLOT_FILE <<- args[4]
 
     stopifnot( file.exists(DATA_FILE) )
     stopifnot( is.integer(YEAR_START) )
@@ -26,6 +26,9 @@ readData <- function() {
 
     # convert time to date
     DATA$ZEIT <<- as.POSIXct( DATA$ZEIT )
+    
+    # sort by time
+    DATA <<- DATA[order(DATA$ZEIT),]
 
     cutData() # drop data outside time range
     }
@@ -41,14 +44,14 @@ makeUtilities <- function() {
     THIS_YEAR <<- as.integer(strftime(Sys.time(),format="%Y")) # the actual year
     PLOT_YEARS <<- seq(YEAR_START,YEAR_END) # plotted years
     PLOT_YEARS_TEXT <<- 
-		if(length(PLOT_YEARS) == 1) { # only one year
-			if(PLOT_YEARS == THIS_YEAR) 
-				paste("dieses Jahr")
-			else 
-				paste("in",PLOT_YEARS)
-		} else { # multiple years
-			paste("von",min(PLOT_YEARS),"bis",max(PLOT_YEARS))
-		}
+        if(length(PLOT_YEARS) == 1) { # only one year
+            if(PLOT_YEARS == THIS_YEAR) 
+                paste("dieses Jahr")
+            else 
+                paste("in",PLOT_YEARS)
+        } else { # multiple years
+            paste("von",min(PLOT_YEARS),"bis",max(PLOT_YEARS))
+        }
 
     EMERGENCY_KIND_COLORS <<- list(
         "Feuer" = "#d82900",
@@ -72,6 +75,15 @@ makeUtilities <- function() {
 
     SCHEDULED <<- grepl("termin",DATA$alarmierungsart,ignore.case=T)
     }
+
+# execute makeUtilities first!
+dropScheduled <- function () {
+    # drop scheduled data
+    DATA <<- DATA[!SCHEDULED,]
+    # add asterisk to PLOT_YEARS_TEXT
+    PLOT_YEARS_TEXT <<- 
+        gsub(x=PLOT_YEARS_TEXT,pattern="(\\s*\\*)?$",replacement=" \\*")
+}
 
 FONTSIZE <<- 11
 

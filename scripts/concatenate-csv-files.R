@@ -2,9 +2,9 @@
 
 ### functions ###
 concatenate.data.frames = function(x,y,fill=NA) {
-	for(col in setdiff(colnames(y),colnames(x))) x[col] = fill
-	for(col in setdiff(colnames(x),colnames(y))) y[col] = fill
-	return(rbind(x,y))
+    for(col in setdiff(colnames(y),colnames(x))) x[col] = fill
+    for(col in setdiff(colnames(x),colnames(y))) y[col] = fill
+    return(rbind(x,y))
 }
 
 options( stringsAsFactors = FALSE )

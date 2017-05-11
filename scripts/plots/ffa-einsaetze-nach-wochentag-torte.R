@@ -6,13 +6,10 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-openDevice() # open device
-
-plotSettings() # plot settings
+dropScheduled() # drop scheduled
 
 # Geplante / terminierte Einsätze ausgenommen (z.B. Brandsicherheitswache)
-WochentageEinsaetze <- strftime(
-    x = DATA$ZEIT[!SCHEDULED], format = "%u")
+WochentageEinsaetze <- strftime(x = DATA$ZEIT, format = "%u")
 WochentageHaeufigkeit <-
     sapply( 1:7, function(tag) length(which(WochentageEinsaetze==tag)) )
 WochentageHaeufigkeit = WochentageHaeufigkeit / length(WochentageEinsaetze)
@@ -32,7 +29,7 @@ pie(WochentageHaeufigkeit,
     cex = par("cex.lab"),
     clockwise=T,
     radius = 0.7,
-    main=paste("Einsatzhäufigkeit nach Wochentag *\n",PLOT_YEARS_TEXT),
+    main=paste("Einsatzhäufigkeit nach Wochentag\n",PLOT_YEARS_TEXT),
 )
 
 plotFooter() # footer

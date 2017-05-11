@@ -24,11 +24,11 @@ DATA$ZEIT <- as.POSIXct(
 
 # sanitize duration
 hours <- strtoi(sub(x = DATA$dauer, 
-		pattern =  "^.*?(\\d+)\\s*stunde.*$", replacement = "\\1", 
-		perl = TRUE, ignore.case = TRUE))
+        pattern =  "^.*?(\\d+)\\s*stunde.*$", replacement = "\\1", 
+        perl = TRUE, ignore.case = TRUE))
 minutes <- strtoi(sub(x = DATA$dauer, 
-		pattern =  "^.*?(\\d+)\\s*minute.*$", replacement = "\\1", 
-		perl = TRUE, ignore.case = TRUE))
+        pattern =  "^.*?(\\d+)\\s*minute.*$", replacement = "\\1", 
+        perl = TRUE, ignore.case = TRUE))
   hours[is.na(hours)&is.finite(minutes)] <- 0
 minutes[is.na(minutes)&is.finite(hours)] <- 0
 DATA$EINSATZDAUER.MINUTEN <- 60 * hours + minutes
@@ -45,7 +45,7 @@ DATA$EINSATZART.HAUPT <-
 # remove gallery from report
 DATA$einsatzbericht <- gsub(
     x=DATA$einsatzbericht,pattern = "#gallery.*?\\*/",replacement = "")
-	
+    
 
 # write output data
 write.table( 

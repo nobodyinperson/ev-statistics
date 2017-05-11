@@ -12,10 +12,11 @@ THIS_DIR <- dirname(sub(
 if(length(THIS_DIR)<1) THIS_DIR <- getSrcDirectory(function(x){x})
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
+dropScheduled() # drop scheduled
+
 # calculate difference between emergencies
-TIME <- as.integer(sort(as.numeric(DATA$ZEIT - min(DATA$ZEIT))[!SCHEDULED]))
-TIME_DIFF <- as.integer(diff(TIME))
-TIME_SINCE_LAST_EMERGENCY <- as.numeric(Sys.time())-as.numeric(max(DATA$ZEIT))
+TIME_DIFF <- abs(diff(DATA$ZEIT))
+TIME_SINCE_LAST_EMERGENCY <- as.integer(Sys.time())-as.integer(max(DATA$ZEIT))
 
 ENSEMBLE_SIZE <- 10000
 
@@ -40,11 +41,11 @@ SECONDS_PER_MONTH <- SECONDS_PER_WEEK * 4
 probability <- function(timespan) { 
         low <- length(which(
                 apply(ENSEMBLE_TIME,1,
-                            function(x)any(x<=timespan))
+                      function(x)any(x<=timespan))
                 )) / ENSEMBLE_SIZE
         high <- length(which(
                 apply(ENSEMBLE_TIME,1,
-                            function(x)any(x-TIME_SINCE_LAST_EMERGENCY<=timespan))
+                      function(x)any(x-TIME_SINCE_LAST_EMERGENCY<=timespan))
                 )) / ENSEMBLE_SIZE
         return( c(low=low,high=high))
 }
@@ -58,9 +59,9 @@ MONTH_PROBABILITY <- round_percent(probability(SECONDS_PER_MONTH)*100)
 
 par(mar=c(4,0,3,0))
 plot(runif(1000),runif(1000)
-		,col=gsub(x=heat.colors(1000),pattern="..$",replacement = "22")
-	 	,pch=20
-		,cex=4
+    ,col=gsub(x=heat.colors(1000),pattern="..$",replacement = "22")
+    ,pch=20
+    ,cex=4
     ,axes = F
     ,xlab="",ylab=""
     ,main="kleiner Spaß:\nEinsatzwahrscheinlichkeit PROGNOSE"
@@ -75,7 +76,7 @@ usr <- par("usr")
 text(x=mean(usr[c(1,2)])
     ,y=usr[3]+0.8*diff(usr[c(3,4)])/3
     ,font=2
-		,bg="white"
+    ,bg="white"
     ,labels = paste("nächste 24 Stunden: ",DAY_PROBABILITY[2],"%")
 )
 text(x=mean(usr[c(1,2)])
