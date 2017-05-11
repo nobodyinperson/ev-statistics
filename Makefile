@@ -58,8 +58,9 @@ PLOT_NAMES = $(basename $(notdir $(PLOT_SCRIPTS))) # only the names
 ###############
 ### targets ###
 ###############
+FORCE = # specify files here via command line to force rebuild
 DEFAULT_TARGET_NAME = all
-.PHONY: $(DEFAULT_TARGET_NAME)
+.PHONY: $(DEFAULT_TARGET_NAME) $(FORCE)
 $(DEFAULT_TARGET_NAME): $(DATA_FILE_SANE)
 
 # download overview page

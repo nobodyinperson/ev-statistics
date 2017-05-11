@@ -50,49 +50,43 @@ probability <- function(timespan) {
 }
 
 round_to <- function(x,base=5) round(round(x/base)*base)
+round_percent <- function(x) ceiling(x)-1 # like floor, but don't reach 100
 
-DAY_PROBABILITY <- round_to(probability(SECONDS_PER_DAY)*100,5)
-# print(round_to(DAY_PROBABILITY*100,5))
-WEEK_PROBABILITY <- round_to(probability(SECONDS_PER_WEEK)*100,5)
-# print(round_to(WEEK_PROBABILITY*100,5))
-MONTH_PROBABILITY <- round_to(probability(SECONDS_PER_MONTH)*100,5)
-# print(round_to(MONTH_PROBABILITY*100,5))
+DAY_PROBABILITY <- round_percent(probability(SECONDS_PER_DAY)*100)
+WEEK_PROBABILITY <- round_percent(probability(SECONDS_PER_WEEK)*100)
+MONTH_PROBABILITY <- round_percent(probability(SECONDS_PER_MONTH)*100)
 
-par(mar=c(3,0,2,0))
+par(mar=c(4,0,3,0))
 plot(runif(1000),runif(1000)
 		,col=gsub(x=heat.colors(1000),pattern="..$",replacement = "22")
 	 	,pch=20
 		,cex=4
     ,axes = F
     ,xlab="",ylab=""
-    ,main="Einsatzwahrscheinlichkeit\nPROGNOSE"
-		,bg="green"
+    ,main="kleiner Spaß:\nEinsatzwahrscheinlichkeit PROGNOSE"
     )
-mtext(side=1,line=1
-    ,text = paste("Daten",PLOT_YEARS_TEXT,"\n",
-        "Annahme: Statistik bleibt gleich")
+mtext(side=1,line=1.8
+    ,font=4
+    ,text = paste("Annahme: Verteilung der Dauer\nzwischen zwei",
+        "aufeinanderfolgenden Einsätzen\n",PLOT_YEARS_TEXT,"bleibt gleich")
     ,cex = par("cex.sub")
     )
-
 usr <- par("usr")
 text(x=mean(usr[c(1,2)])
     ,y=usr[3]+0.8*diff(usr[c(3,4)])/3
     ,font=2
 		,bg="white"
-    ,labels = paste("nächste 24 Stunden: "
-        ,DAY_PROBABILITY[1],"-",DAY_PROBABILITY[2],"%")
+    ,labels = paste("nächste 24 Stunden: ",DAY_PROBABILITY[2],"%")
 )
 text(x=mean(usr[c(1,2)])
     ,y=usr[3]+1.5*diff(usr[c(3,4)])/3
     ,font=2
-    ,labels = paste("nächste 7 Tage: "
-        ,WEEK_PROBABILITY[1],"-",WEEK_PROBABILITY[2],"%")
+    ,labels = paste("nächste 7 Tage: ",WEEK_PROBABILITY[2],"%")
 )
 text(x=mean(usr[c(1,2)])
     ,y=usr[3]+2.2*diff(usr[c(3,4)])/3
     ,font=2
-    ,labels = paste("nächste 30 Tage: "
-        ,MONTH_PROBABILITY[1],"-",MONTH_PROBABILITY[2],"%")
+    ,labels = paste("nächste 30 Tage: ",MONTH_PROBABILITY[2],"%")
 )
 
 plotFooter() # footer
