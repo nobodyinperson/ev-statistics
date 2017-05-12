@@ -6,9 +6,7 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-openDevice() # open device
-
-plotSettings() # plot settings
+init() # initialise data and plot
 
 PIEPLOT_TOOSMALL_ANGLE = 0.02 # in radians
 

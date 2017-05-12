@@ -147,16 +147,28 @@ closeDevice <- function() {
     }
 
 
-#############
+### statistical utilities ###
+PRNGfromSample <- function(
+        x,
+        cdf=ecdf(x),
+        xmin=min(x,na.rm=T),
+        xmax=max(x,na.rm=T)
+        ) {
+    x_s <- c(xmin,sort(x),xmin)
+    inv <- approxfun( x = cdf(x_s), y = x_s)
+    prng <- function(n) inv(runif(n))
+    return(prng)
+    }
+
 ### Do it ###
-#############
-parseArgs() # parse CMD arguments
+init <- function() {
+    parseArgs() # parse CMD arguments
 
-readData() # read data
+    readData() # read data
 
-makeUtilities() # calculate utilities
+    makeUtilities() # calculate utilities
 
-openDevice() # open device
+    openDevice() # open device
 
-plotSettings() # plot settings
-
+    plotSettings() # plot settings
+    }

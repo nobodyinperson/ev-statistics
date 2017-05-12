@@ -6,6 +6,8 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
+init() # initialise data and plot
+
 dropScheduled() # drop scheduled
 
 HourColorsSequence = sin(seq(f=0,t=pi,l=24))^1.8 # grayscale

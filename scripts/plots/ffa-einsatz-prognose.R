@@ -12,6 +12,8 @@ THIS_DIR <- dirname(sub(
 if(length(THIS_DIR)<1) THIS_DIR <- getSrcDirectory(function(x){x})
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
+init() # initialise data and plot
+
 dropScheduled() # drop scheduled
 
 # constants
@@ -28,12 +30,22 @@ TIME_DIFF <- abs(diff(as.integer(DATA$ZEIT)))
 TIME_DIFF <- TIME_DIFF[TIME_DIFF>TIME_DIFF_THRESHOLD]
 TIME_SINCE_LAST_EMERGENCY <- as.integer(Sys.time())-as.integer(max(DATA$ZEIT))
 
-ENSEMBLE_SIZE <- 10000
+# random number generator for time differences
+prng <- PRNGfromSample(TIME_DIFF,xmin=0)
+# wrapper to drop diffs lower than TIME_DIFF_THRESHOLD
+TIME_DIFF_PRNG <- function(n) { 
+    s <- prng(n)
+    s[s<TIME_DIFF_THRESHOLD] <- TIME_DIFF_THRESHOLD
+    return(s)
+    }
+
+ENSEMBLE_SIZE <- 5000
 
 ROW_NAMES <- paste("m",seq(ENSEMBLE_SIZE),sep="")
 COL_NAMES <- paste("e",seq_along(TIME_DIFF),sep="")
 # get ensemble of time differences
-ENSEMBLE_DIFF <- t(sapply(seq(ENSEMBLE_SIZE),function(nr)sample(TIME_DIFF)))
+ENSEMBLE_DIFF <- t(sapply(seq(ENSEMBLE_SIZE),
+                   function(nr)TIME_DIFF_PRNG(length(TIME_DIFF))))
 colnames(ENSEMBLE_DIFF)<-COL_NAMES
 rownames(ENSEMBLE_DIFF)<-ROW_NAMES
 

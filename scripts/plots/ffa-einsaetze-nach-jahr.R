@@ -6,9 +6,7 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
-openDevice() # open device
-
-plotSettings() # plot settings
+init() # initialise data and plot
 
 par(mar=c(4,2,4,2)+0.1)
 

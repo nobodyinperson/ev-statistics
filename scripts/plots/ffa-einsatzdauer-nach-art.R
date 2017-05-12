@@ -6,11 +6,9 @@ THIS_DIR <- dirname(sub(
  pattern = "--file=", replacement = ""))
 source(paste(THIS_DIR,"functions.R",sep="/"))
 
+init() # initialise data and plot
+
 library(graphics)
-
-openDevice() # open device
-
-plotSettings() # plot settings
 
 EinsatzArtenHauptAlle = DATA$EINSATZART.HAUPT
 EinsatzArtenHaupt = unique(EinsatzArtenHauptAlle)
