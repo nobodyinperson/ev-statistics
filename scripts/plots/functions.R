@@ -148,6 +148,17 @@ closeDevice <- function() {
 
 
 ### statistical utilities ###
+MonthOfYearPlusSecondInMonth <- function(x,origin) { 
+		x_p <- as.POSIXct( x, origin = origin )
+		second <- as.integer(x_p)
+    month <- as.integer(as.POSIXct(strftime(x_p,"%Y-%m-01"),format="%Y-%m-%d"))
+    month_of_year <- as.integer(strftime(x_p,"%m"))
+    second_in_month <- second - month
+    seconds_per_month <- 31 * 24 * 60 * 60
+    moy_plus_sim <- month_of_year * seconds_per_month + second_in_month
+    return(moy_plus_sim)
+    }
+
 PRNGfromSample <- function(
         x,
         cdf=ecdf(x),

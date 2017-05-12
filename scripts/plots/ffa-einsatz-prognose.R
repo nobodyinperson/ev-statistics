@@ -1,9 +1,9 @@
 #!/usr/bin/env Rscript
 
-# DATA_FILE <- "data/all-data-sane.csv"
-# YEAR_START <- as.integer(2011)
-# YEAR_END   <- as.integer(2017)
-# PLOT_FILE  <- "plots/ffa-einsatz-prognose.png"
+DATA_FILE <- "data/all-data-sane.csv"
+YEAR_START <- as.integer(2011)
+YEAR_END   <- as.integer(2017)
+PLOT_FILE  <- "plots/ffa-einsatz-prognose.png"
 
 # source function file
 THIS_DIR <- dirname(sub(
@@ -24,11 +24,22 @@ SECONDS_PER_MONTH <- SECONDS_PER_WEEK * 4
 
 TIME_DIFF_THRESHOLD <- SECONDS_PER_HOUR # time diff threshold to drop
 
+# ensemble settings
+ENSEMBLE_SIZE <- 1000 # number of members
+# estimate forecast time/number of draws of each member
+ENSEMBLE_MEMBER_LENGTH <- ceiling(SECONDS_PER_MONTH/mean(TIME_DIFF)*4)
+# quantiles to check
+QUANTILES <- seq(0,1,l=11)
+
+
 # calculate difference between emergencies
 TIME_DIFF <- abs(diff(as.integer(DATA$ZEIT)))
 # drop too small time differences
 TIME_DIFF <- TIME_DIFF[TIME_DIFF>TIME_DIFF_THRESHOLD]
 TIME_SINCE_LAST_EMERGENCY <- as.integer(Sys.time())-as.integer(max(DATA$ZEIT))
+
+TIME_MOY_PLUS_SIM <- MonthOfYearPlusSecondInMonth(DATA$ZEIT)
+TIME_MOY_PLUS_SIM_QUANTILES <- quantile(TIME_MOY_PLUS_SIM,probs=QUANTILES)
 
 # random number generator for time differences
 prng <- PRNGfromSample(TIME_DIFF,xmin=0)
@@ -39,29 +50,38 @@ TIME_DIFF_PRNG <- function(n) {
     return(s)
     }
 
-ENSEMBLE_SIZE <- 5000
-
-ROW_NAMES <- paste("m",seq(ENSEMBLE_SIZE),sep="")
-COL_NAMES <- paste("e",seq_along(TIME_DIFF),sep="")
 # get ensemble of time differences
 ENSEMBLE_DIFF <- t(sapply(seq(ENSEMBLE_SIZE),
-                   function(nr)TIME_DIFF_PRNG(length(TIME_DIFF))))
-colnames(ENSEMBLE_DIFF)<-COL_NAMES
-rownames(ENSEMBLE_DIFF)<-ROW_NAMES
+                   function(nr)TIME_DIFF_PRNG(ENSEMBLE_MEMBER_LENGTH)))
+colnames(ENSEMBLE_DIFF)<-paste("e",seq(ENSEMBLE_MEMBER_LENGTH),sep="")
+rownames(ENSEMBLE_DIFF)<-paste("m",seq(ENSEMBLE_SIZE),sep="")
 
 # cumulate time differences
-ENSEMBLE_TIME <- t(apply(ENSEMBLE_DIFF,1,cumsum))
-stopifnot(all(ENSEMBLE_TIME[1,]==cumsum(ENSEMBLE_DIFF[1,]))) # quality check
+ENSEMBLE_REL_TIME <- t(apply(ENSEMBLE_DIFF,1,cumsum))
+stopifnot(all(ENSEMBLE_REL_TIME[1,]==cumsum(ENSEMBLE_DIFF[1,]))) # quality check
+
+# add relative time to current time to get actual time
+ENSEMBLE_TIME_MOY_PLUS_SIM <- t(apply(ENSEMBLE_REL_TIME,1,
+					function(t)MonthOfYearPlusSecondInMonth(t,origin=Sys.time())))
+# check how equal the members' moy_plus_sim is to original data
+ENSEMBLE_TIME_MOY_PLUS_SIM_DIST_EQUALITY <- 
+	apply(ENSEMBLE_TIME_MOY_PLUS_SIM,1,
+	function(moy_plus_sim){
+		cor(quantile(moy_plus_sim,probs=QUANTILES),TIME_MOY_PLUS_SIM_QUANTILES)})
+
+# only keep data that is 'good enough'
+good <- ENSEMBLE_TIME_MOY_PLUS_SIM_DIST_EQUALITY > 0.95
+ENSEMBLE_REL_TIME_GOOD <- ENSEMBLE_REL_TIME[good,]
 
 probability <- function(timespan) { 
         low <- length(which(
-                apply(ENSEMBLE_TIME,1,
+                apply(ENSEMBLE_REL_TIME_GOOD,1,
                       function(x)any(x<=timespan))
-                )) / ENSEMBLE_SIZE
+                )) / nrow(ENSEMBLE_REL_TIME_GOOD)
         high <- length(which(
-                apply(ENSEMBLE_TIME,1,
+                apply(ENSEMBLE_REL_TIME_GOOD,1,
                       function(x)any(x-TIME_SINCE_LAST_EMERGENCY<=timespan))
-                )) / ENSEMBLE_SIZE
+                )) / nrow(ENSEMBLE_REL_TIME_GOOD)
         return( c(low=low,high=high))
 }
 
@@ -70,14 +90,14 @@ round_to <- function(x,base=5) round(round(x/base)*base)
 round_percent <- function(x) sapply(round(x),function(y)min(y,99)) 
 
 DAY_PROBABILITY <- round_percent(probability(SECONDS_PER_DAY)*100)
-# cat("day probability:\n")
-# print(DAY_PROBABILITY)
+cat("day probability:\n")
+print(DAY_PROBABILITY)
 WEEK_PROBABILITY <- round_percent(probability(SECONDS_PER_WEEK)*100)
-# cat("week probability:\n")
-# print(WEEK_PROBABILITY)
+cat("week probability:\n")
+print(WEEK_PROBABILITY)
 MONTH_PROBABILITY <- round_percent(probability(SECONDS_PER_MONTH)*100)
-# cat("month probability:\n")
-# print(MONTH_PROBABILITY)
+cat("month probability:\n")
+print(MONTH_PROBABILITY)
 
 par(mar=c(4,0,3,0))
 plot(runif(1000),runif(1000)
