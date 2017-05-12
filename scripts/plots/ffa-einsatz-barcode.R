@@ -16,11 +16,12 @@ plot(y=rep(1,length(DATA$ZEIT))
         to=as.POSIXct(paste(max(PLOT_YEARS)+1,"-01-01",sep="")),
         len=length(DATA$ZEIT)
         )
-    ,type="n",yaxt="n",ylab="",
+    ,type="n",yaxt="n",ylab=""
     ,main=paste("Einsatz-Barcode\n",PLOT_YEARS_TEXT)
     #xlab=ifelse(length(PLOT$Jahre)==1,"Monat","Zeit")
     ,xlab = ""
-    ,panel.last=abline(v=DATA$ZEIT,xpd=F)
+    ,panel.last=c(abline(v=DATA$ZEIT,xpd=F),
+                  abline(v=Sys.time(),lwd=3,lty=3,col="darkred"))
     ,bty = "n" # no box
     )
 
